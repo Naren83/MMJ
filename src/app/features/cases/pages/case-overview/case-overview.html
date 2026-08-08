@@ -1,0 +1,33 @@
+<main class="workspace">
+  <app-case-sidebar />
+
+  <section class="content">
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">Active workload</p>
+        <h1>Case Overview</h1>
+      </div>
+      <label class="search">
+        <span>Search cases</span>
+        <input
+          type="search"
+          [ngModel]="searchTerm()"
+          (ngModelChange)="searchTerm.set($event)"
+          placeholder="Case, borrower, property, owner"
+        />
+      </label>
+    </header>
+
+    <app-case-summary-metrics [summary]="summary()" />
+
+    <div class="case-grid">
+      <app-case-list
+        [cases]="filteredCases()"
+        [selectedCaseId]="selectedCase().id"
+        (caseSelected)="selectCase($event)"
+      />
+
+      <app-case-detail [caseItem]="selectedCase()" />
+    </div>
+  </section>
+</main>

@@ -1,0 +1,103 @@
+<section class="case-detail" aria-label="Selected case details">
+  <div class="detail-header">
+    <div>
+      <p class="eyebrow">{{ caseItem.id }}</p>
+      <h2>{{ caseItem.borrower }}</h2>
+      @if (caseItem.coBorrower) {
+        <span>With {{ caseItem.coBorrower }}</span>
+      }
+    </div>
+    <span class="priority priority-{{ caseItem.priority.toLowerCase() }}">
+      {{ caseItem.priority }}
+    </span>
+  </div>
+
+  <dl class="detail-stats">
+    <div>
+      <dt>Loan amount</dt>
+      <dd>{{ caseItem.loanAmount | currency: 'USD':'symbol':'1.0-0' }}</dd>
+    </div>
+    <div>
+      <dt>LTV</dt>
+      <dd>{{ caseItem.ltv | percent: '1.0-0' }}</dd>
+    </div>
+    <div>
+      <dt>Rate</dt>
+      <dd>{{ caseItem.rate }}%</dd>
+    </div>
+  </dl>
+
+  <div class="detail-section">
+    <h3>Loan details</h3>
+    <dl>
+      <div>
+        <dt>Product</dt>
+        <dd>{{ caseItem.product }}</dd>
+      </div>
+      <div>
+        <dt>Purpose</dt>
+        <dd>{{ caseItem.purpose }}</dd>
+      </div>
+      <div>
+        <dt>Channel</dt>
+        <dd>{{ caseItem.channel }}</dd>
+      </div>
+      <div>
+        <dt>Loan officer</dt>
+        <dd>{{ caseItem.loanOfficer }}</dd>
+      </div>
+    </dl>
+  </div>
+
+  <div class="detail-section">
+    <h3>Property</h3>
+    <dl>
+      <div>
+        <dt>Address</dt>
+        <dd>{{ caseItem.propertyAddress }}</dd>
+      </div>
+      <div>
+        <dt>Type</dt>
+        <dd>{{ caseItem.propertyType }}</dd>
+      </div>
+      <div>
+        <dt>Occupancy</dt>
+        <dd>{{ caseItem.occupancy }}</dd>
+      </div>
+    </dl>
+  </div>
+
+  <div class="detail-section">
+    <h3>Milestones</h3>
+    <ol class="milestones">
+      <li>
+        <span>Submitted</span>
+        <strong>{{ caseItem.submitted | date: 'MMM d, y' }}</strong>
+      </li>
+      <li>
+        <span>Appraisal</span>
+        <strong>{{ caseItem.appraisal }}</strong>
+      </li>
+      <li>
+        <span>Title</span>
+        <strong>{{ caseItem.title }}</strong>
+      </li>
+      <li>
+        <span>Target close</span>
+        <strong>{{ caseItem.targetClose | date: 'MMM d, y' }}</strong>
+      </li>
+    </ol>
+  </div>
+
+  <div class="action-panel">
+    <span>Next action</span>
+    <p>{{ caseItem.nextAction }}</p>
+    <a class="open-case" [routerLink]="['/cases', caseItem.id]">Open Case</a>
+  </div>
+
+  <div class="detail-section">
+    <h3>Notes</h3>
+    <p class="notes">{{ caseItem.notes }}</p>
+    <p class="updated">Last updated {{ caseItem.lastUpdated | date: 'MMM d, h:mm a' }}</p>
+  </div>
+</section>

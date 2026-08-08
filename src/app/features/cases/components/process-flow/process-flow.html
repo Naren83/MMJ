@@ -1,0 +1,21 @@
+<ol class="process-flow">
+  @for (step of steps; track step.id; let last = $last) {
+    <li class="process-step" [class]="step.status">
+      <button
+        type="button"
+        class="step-node"
+        [attr.aria-current]="step.status === 'active' ? 'step' : null"
+        (click)="selectStep(step.id)"
+      >
+        <span class="step-code">{{ step.shortLabel }}</span>
+        <span class="step-copy">
+          <strong>{{ step.label }}</strong>
+          <small>{{ step.owner }}</small>
+        </span>
+      </button>
+      @if (!last) {
+        <span class="connector" aria-hidden="true"></span>
+      }
+    </li>
+  }
+</ol>

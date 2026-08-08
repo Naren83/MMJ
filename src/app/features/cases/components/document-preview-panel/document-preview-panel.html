@@ -1,0 +1,54 @@
+@if (documentSignal(); as document) {
+  <aside class="preview-panel" aria-label="Document preview">
+    <header class="preview-header">
+      <div>
+        <p class="eyebrow">Preview</p>
+        <h2>{{ document.documentName }}</h2>
+        <p>{{ document.applicantName }} · {{ processStepLabel() }}</p>
+      </div>
+      <button type="button" aria-label="Close preview" title="Close preview" (click)="closed.emit()">×</button>
+    </header>
+
+    <div class="preview-toolbar" aria-label="Preview controls">
+      <button type="button" aria-label="Previous document" title="Previous document" [disabled]="!hasPrevious" (click)="previous.emit()">‹</button>
+      <button type="button" aria-label="Next document" title="Next document" [disabled]="!hasNext" (click)="next.emit()">›</button>
+      <button type="button" aria-label="Zoom out" title="Zoom out" (click)="zoomOut()">−</button>
+      <span>{{ zoom() }}%</span>
+      <button type="button" aria-label="Zoom in" title="Zoom in" (click)="zoomIn()">+</button>
+      <button type="button" class="fit-button" (click)="fitToWidth()">Fit</button>
+    </div>
+
+    @if (document.previewAvailable) {
+      <div class="preview-stage">
+        <div class="mock-page" [style.width.%]="zoom()">
+          <div class="page-topline"></div>
+          <p class="mock-kicker">{{ document.fileType }} · {{ document.fileSize }}</p>
+          <h3>{{ document.documentName }}</h3>
+          <dl>
+            <div><dt>Document type</dt><dd>{{ document.documentType }}</dd></div>
+            <div><dt>Applicant</dt><dd>{{ document.applicantName }}</dd></div>
+            <div><dt>Status</dt><dd>{{ document.status }}</dd></div>
+            <div><dt>Uploaded</dt><dd>{{ document.uploadedAt | date: 'medium' }}</dd></div>
+          </dl>
+          <div class="mock-lines" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+        <div class="mock-page page-two" [style.width.%]="zoom()">
+          <p class="mock-kicker">Page 2</p>
+          <div class="mock-lines" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="preview-empty">
+        <strong>Preview is not available for this document.</strong>
+        <span>{{ document.fileName }}</span>
+      </div>
+    }
+  </aside>
+}
+

@@ -1,0 +1,64 @@
+<section class="case-list" aria-label="Cases">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">Queue</p>
+      <h2>{{ cases.length }} cases</h2>
+    </div>
+    <span class="timestamp">Updated today</span>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Case</th>
+          <th>Status</th>
+          <th>Loan</th>
+          <th>Owner</th>
+          <th>Target</th>
+          <th>Conditions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (caseItem of cases; track caseItem.id) {
+          <tr
+            [class.selected]="caseItem.id === selectedCaseId"
+            [routerLink]="['/cases', caseItem.id]"
+          >
+            <td>
+              <a class="case-link" [routerLink]="['/cases', caseItem.id]">
+                <strong>{{ caseItem.id }}</strong>
+                <span>{{ caseItem.borrower }}</span>
+              </a>
+            </td>
+            <td>
+              <span class="status status-{{ statusKey(caseItem.status) }}">
+                {{ caseItem.status }}
+              </span>
+            </td>
+            <td>
+              <strong>{{ caseItem.loanAmount | currency: 'USD':'symbol':'1.0-0' }}</strong>
+              <span>{{ caseItem.product }}</span>
+            </td>
+            <td>
+              <strong>{{ caseItem.processor }}</strong>
+              <span>{{ caseItem.underwriter }}</span>
+            </td>
+            <td>
+              <strong>{{ caseItem.targetClose | date: 'MMM d' }}</strong>
+              <span>{{ caseItem.slaHoursRemaining }}h SLA</span>
+            </td>
+            <td>
+              <strong>{{ caseItem.conditionsOpen }}</strong>
+              <span>{{ caseItem.documentsMissing }} docs missing</span>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="empty">No cases match this search.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

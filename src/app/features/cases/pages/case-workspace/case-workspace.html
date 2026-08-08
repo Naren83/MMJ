@@ -1,0 +1,60 @@
+<main class="case-shell">
+  <aside class="case-tools" aria-label="Case tools">
+    <a class="back-link" routerLink="/">Overview</a>
+    <button type="button" class="tool-button" [class.active]="documentPanelOpen()" aria-label="Documents" title="Documents" (click)="toggleDocumentPanel()">DOCS</button>
+  </aside>
+
+  @if (documentPanelOpen()) {
+    <app-document-panel
+      [applicants]="applicants()"
+      [documents]="documents()"
+      [selectedDocumentId]="previewDocumentId()"
+      (documentAdded)="addDocument($event)"
+      (documentDeleted)="deleteDocument($event)"
+      (documentPreviewed)="previewDocumentFromPanel($event)"
+    />
+  }
+
+  <section class="workspace-layout" [class.with-preview]="previewDocument()">
+    @if (previewDocument(); as document) {
+      <app-document-preview-panel
+        [document]="document"
+        [hasPrevious]="previewDocumentIndex() > 0"
+        [hasNext]="previewDocumentIndex() < documents().length - 1"
+        (closed)="previewDocumentId.set(undefined)"
+        (previous)="previewPreviousDocument()"
+        (next)="previewNextDocument()"
+      />
+    }
+
+    <section class="workspace">
+      <header class="workspace-header">
+        <div>
+          <p class="eyebrow">{{ caseItem.id }}</p>
+          <h1>{{ caseItem.borrower }}</h1>
+          <p class="case-context">
+            {{ caseItem.product }} · {{ caseItem.propertyAddress }}
+          </p>
+        </div>
+        <div class="case-status">
+          <span class="priority priority-{{ caseItem.priority.toLowerCase() }}">{{ caseItem.priority }}</span>
+          <strong>{{ caseItem.status }}</strong>
+        </div>
+      </header>
+
+      <section class="process-card" aria-label="Mortgage review process">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Process Flow</p>
+            <h2>{{ activeStep().label }}</h2>
+          </div>
+          <span>{{ caseItem.slaHoursRemaining }}h SLA</span>
+        </div>
+
+        <app-process-flow [steps]="steps()" (stepSelected)="selectStep($event)" />
+      </section>
+
+      <app-process-step-content [activeStepId]="activeStepId()" [caseItem]="caseItem" />
+    </section>
+  </section>
+</main>

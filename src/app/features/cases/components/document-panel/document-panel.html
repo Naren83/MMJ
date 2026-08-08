@@ -1,0 +1,133 @@
+<section class="document-panel" aria-label="Document management">
+  <header class="panel-header">
+    <div>
+      <p class="eyebrow">Documents</p>
+      <h2>Case Documents</h2>
+    </div>
+    <button type="button" class="icon-button" aria-label="Add document" title="Add document" (click)="showAddForm.set(!showAddForm())">+</button>
+  </header>
+
+  <div class="applicant-tabs" aria-label="Applicant filter">
+    <button type="button" [class.active]="selectedApplicantId() === 'all'" (click)="selectApplicant('all')">All</button>
+    @for (applicant of applicantsSignal(); track applicant.applicantId) {
+      <button type="button" [class.active]="selectedApplicantId() === applicant.applicantId" (click)="selectApplicant(applicant.applicantId)">
+        {{ applicant.role === 'Case Level' ? 'Case' : applicant.role }}
+      </button>
+    }
+  </div>
+
+  <div class="filters">
+    <label>
+      <span>Search</span>
+      <input type="search" placeholder="Name or type" [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" />
+    </label>
+    <label>
+      <span>Step</span>
+      <select [ngModel]="selectedStepId()" (ngModelChange)="selectedStepId.set($event)">
+        <option value="all">All steps</option>
+        @for (step of steps; track step.id) {
+          <option [value]="step.id">{{ step.label }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      <span>Status</span>
+      <select [ngModel]="selectedStatus()" (ngModelChange)="selectedStatus.set($event)">
+        <option value="all">All statuses</option>
+        @for (status of statuses; track status) {
+          <option [value]="status">{{ status }}</option>
+        }
+      </select>
+    </label>
+  </div>
+
+  @if (showAddForm()) {
+    <form class="add-form" (ngSubmit)="submitDocument()">
+      <label>
+        <span>Applicant</span>
+        <select [ngModel]="addModel().applicantId" name="applicantId" (ngModelChange)="updateAddField('applicantId', $event)" required>
+          <option value="case">Case Level</option>
+          @for (applicant of applicantsSignal(); track applicant.applicantId) {
+            @if (applicant.role !== 'Case Level') {
+              <option [value]="applicant.applicantId">{{ applicant.applicantName }}</option>
+            }
+          }
+        </select>
+      </label>
+      <label>
+        <span>Process step</span>
+        <select [ngModel]="addModel().processStep" name="processStep" (ngModelChange)="updateAddField('processStep', $event)" required>
+          @for (step of steps; track step.id) {
+            <option [value]="step.id">{{ step.label }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        <span>Document type</span>
+        <input type="text" [ngModel]="addModel().documentType" name="documentType" (ngModelChange)="updateAddField('documentType', $event)" required />
+      </label>
+      <label>
+        <span>Document name</span>
+        <input type="text" [ngModel]="addModel().documentName" name="documentName" (ngModelChange)="updateAddField('documentName', $event)" required />
+      </label>
+      <label>
+        <span>File</span>
+        <input type="text" placeholder="example.pdf" [ngModel]="addModel().fileName" name="fileName" (ngModelChange)="updateAddField('fileName', $event)" required />
+      </label>
+      <div class="form-actions">
+        <button type="button" class="secondary" (click)="showAddForm.set(false)">Cancel</button>
+        <button type="submit">Add</button>
+      </div>
+    </form>
+  }
+
+  <div class="document-groups">
+    @if (visibleDocuments().length === 0) {
+      <p class="empty">No documents found for this applicant.</p>
+    }
+
+    @for (group of groupedDocuments(); track group.step.id) {
+      @if (group.documents.length > 0) {
+        <section class="document-group">
+          <h3>{{ group.step.label }}</h3>
+          <div class="document-list">
+            @for (document of group.documents; track document.documentId) {
+              <article class="document-row" [class.selected]="selectedDocumentId === document.documentId">
+                <button type="button" class="document-main" (click)="documentPreviewed.emit(document)">
+                  <strong>{{ document.documentName }}</strong>
+                  <span>{{ document.documentType }} · {{ document.applicantName }}</span>
+                </button>
+                <span class="status status-{{ document.status.toLowerCase().replace(' ', '-') }}">{{ document.status }}</span>
+                <div class="row-actions">
+                  <button type="button" aria-label="View metadata" title="View metadata" (click)="metadataDocumentId.set(document.documentId)">i</button>
+                  <button type="button" aria-label="Preview document" title="Preview document" (click)="documentPreviewed.emit(document)">↗</button>
+                  <button type="button" aria-label="Delete document" title="Delete document" (click)="confirmDelete(document)">×</button>
+                </div>
+              </article>
+            }
+          </div>
+        </section>
+      }
+    }
+  </div>
+
+  @if (metadataDocument(); as document) {
+    <aside class="metadata-panel" aria-label="Document metadata">
+      <div class="metadata-heading">
+        <h3>{{ document.documentName }}</h3>
+        <button type="button" aria-label="Close metadata" title="Close metadata" (click)="metadataDocumentId.set(undefined)">×</button>
+      </div>
+      <dl>
+        <div><dt>Applicant</dt><dd>{{ document.applicantName }}</dd></div>
+        <div><dt>Process step</dt><dd>{{ stepLabel(document.processStep) }}</dd></div>
+        <div><dt>Document type</dt><dd>{{ document.documentType }}</dd></div>
+        <div><dt>Status</dt><dd>{{ document.status }}</dd></div>
+        <div><dt>Uploaded by</dt><dd>{{ document.uploadedBy }}</dd></div>
+        <div><dt>Uploaded</dt><dd>{{ document.uploadedAt | date: 'medium' }}</dd></div>
+        <div><dt>File name</dt><dd>{{ document.fileName }}</dd></div>
+        <div><dt>File type</dt><dd>{{ document.fileType }}</dd></div>
+        <div><dt>File size</dt><dd>{{ document.fileSize }}</dd></div>
+      </dl>
+    </aside>
+  }
+</section>

@@ -1,0 +1,124 @@
+<section class="review-panel" [attr.aria-label]="activeStepId">
+  @switch (activeStepId) {
+    @case ('summary') {
+      <div class="panel-header">
+        <p class="eyebrow">Case Snapshot</p>
+        <h2>Summary</h2>
+      </div>
+      <dl class="metric-grid">
+        <div>
+          <dt>Requested loan</dt>
+          <dd>{{ caseItem.loanAmount | currency: 'USD':'symbol':'1.0-0' }}</dd>
+        </div>
+        <div>
+          <dt>Loan to value</dt>
+          <dd>{{ caseItem.ltv | percent: '1.0-0' }}</dd>
+        </div>
+        <div>
+          <dt>Purpose</dt>
+          <dd>{{ caseItem.purpose }}</dd>
+        </div>
+        <div>
+          <dt>Open conditions</dt>
+          <dd>{{ caseItem.conditionsOpen }}</dd>
+        </div>
+      </dl>
+      <div class="note-block">
+        <strong>Key risk flags</strong>
+        <p>{{ caseItem.nextAction }}</p>
+      </div>
+    }
+
+    @case ('personal') {
+      <div class="panel-header">
+        <p class="eyebrow">Applicant Review</p>
+        <h2>Personal Details</h2>
+      </div>
+      <dl class="detail-list">
+        <div>
+          <dt>Primary applicant</dt>
+          <dd>{{ caseItem.borrower }}</dd>
+        </div>
+        <div>
+          <dt>Co-applicant</dt>
+          <dd>{{ caseItem.coBorrower ?? 'None' }}</dd>
+        </div>
+        <div>
+          <dt>Channel</dt>
+          <dd>{{ caseItem.channel }}</dd>
+        </div>
+        <div>
+          <dt>Document verification</dt>
+          <dd>{{ caseItem.documentsMissing === 0 ? 'Complete' : caseItem.documentsMissing + ' missing' }}</dd>
+        </div>
+      </dl>
+    }
+
+    @case ('liabilities') {
+      <div class="panel-header">
+        <p class="eyebrow">Affordability</p>
+        <h2>External Liabilities</h2>
+      </div>
+      <dl class="metric-grid">
+        <div>
+          <dt>Estimated DTI</dt>
+          <dd>36%</dd>
+        </div>
+        <div>
+          <dt>Verified debts</dt>
+          <dd>4</dd>
+        </div>
+        <div>
+          <dt>Open discrepancies</dt>
+          <dd>{{ caseItem.conditionsOpen > 0 ? 1 : 0 }}</dd>
+        </div>
+      </dl>
+      <div class="note-block">
+        <strong>Review focus</strong>
+        <p>Validate bureau obligations against uploaded statements before clearing affordability conditions.</p>
+      </div>
+    }
+
+    @case ('collateral') {
+      <div class="panel-header">
+        <p class="eyebrow">Security Review</p>
+        <h2>Collateral</h2>
+      </div>
+      <dl class="detail-list">
+        <div>
+          <dt>Property</dt>
+          <dd>{{ caseItem.propertyAddress }}</dd>
+        </div>
+        <div>
+          <dt>Type</dt>
+          <dd>{{ caseItem.propertyType }}</dd>
+        </div>
+        <div>
+          <dt>Appraisal</dt>
+          <dd>{{ caseItem.appraisal }}</dd>
+        </div>
+        <div>
+          <dt>Title</dt>
+          <dd>{{ caseItem.title }}</dd>
+        </div>
+      </dl>
+    }
+
+    @case ('decision') {
+      <div class="panel-header">
+        <p class="eyebrow">Outcome</p>
+        <h2>Decision</h2>
+      </div>
+      <div class="decision-grid">
+        <button type="button">Approve for next step</button>
+        <button type="button">Approve with conditions</button>
+        <button type="button">Return to front office</button>
+        <button type="button">Escalate</button>
+      </div>
+      <label class="comment-box">
+        Reviewer comments
+        <textarea rows="5">{{ caseItem.notes }}</textarea>
+      </label>
+    }
+  }
+</section>

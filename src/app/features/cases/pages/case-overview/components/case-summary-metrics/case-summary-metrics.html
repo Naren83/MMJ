@@ -1,0 +1,18 @@
+<section class="metrics" aria-label="Case summary">
+  <article>
+    <span>Total exposure</span>
+    <strong>{{ summary.totalLoanAmount | currency: 'USD':'symbol':'1.0-0' }}</strong>
+  </article>
+  <article>
+    <span>High priority</span>
+    <strong>{{ summary.urgentCases }}</strong>
+  </article>
+  <article>
+    <span>Open conditions</span>
+    <strong>{{ summary.openConditions }}</strong>
+  </article>
+  <article>
+    <span>SLA watch</span>
+    <strong>{{ summary.closingSoon }}</strong>
+  </article>
+</section>
