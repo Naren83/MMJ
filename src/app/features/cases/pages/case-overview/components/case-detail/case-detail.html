@@ -1,103 +1,115 @@
-<section class="case-detail" aria-label="Selected case details">
+<section class="case-detail anim-slide-right" aria-label="Selected case details">
+
+  <!-- Header -->
   <div class="detail-header">
-    <div>
-      <p class="eyebrow">{{ caseItem.id }}</p>
-      <h2>{{ caseItem.borrower }}</h2>
-      @if (caseItem.coBorrower) {
-        <span>With {{ caseItem.coBorrower }}</span>
-      }
+    <div class="detail-id-row">
+      <span class="case-id-chip">{{ caseItem.id }}</span>
+      <span class="priority-chip priority-{{ caseItem.priority.toLowerCase() }}">
+        @if (caseItem.priority === 'High') {
+          <span class="priority-dot"></span>
+        }
+        {{ caseItem.priority }}
+      </span>
     </div>
-    <span class="priority priority-{{ caseItem.priority.toLowerCase() }}">
-      {{ caseItem.priority }}
-    </span>
+    <h2>{{ caseItem.borrower }}</h2>
+    @if (caseItem.coBorrower) {
+      <p class="co-borrower">& {{ caseItem.coBorrower }}</p>
+    }
+    <span class="status-chip status-{{ caseItem.status.toLowerCase().replaceAll(' ', '-') }}">{{ caseItem.status }}</span>
   </div>
 
-  <dl class="detail-stats">
-    <div>
-      <dt>Loan amount</dt>
+  <!-- Key Stats -->
+  <div class="key-stats">
+    <div class="key-stat">
+      <dt>Loan Amount</dt>
       <dd>{{ caseItem.loanAmount | currency: 'USD':'symbol':'1.0-0' }}</dd>
     </div>
-    <div>
+    <div class="key-stat">
       <dt>LTV</dt>
       <dd>{{ caseItem.ltv | percent: '1.0-0' }}</dd>
     </div>
-    <div>
+    <div class="key-stat">
       <dt>Rate</dt>
       <dd>{{ caseItem.rate }}%</dd>
     </div>
-  </dl>
+  </div>
 
+  <!-- Loan Details -->
   <div class="detail-section">
-    <h3>Loan details</h3>
-    <dl>
-      <div>
-        <dt>Product</dt>
-        <dd>{{ caseItem.product }}</dd>
-      </div>
-      <div>
-        <dt>Purpose</dt>
-        <dd>{{ caseItem.purpose }}</dd>
-      </div>
-      <div>
-        <dt>Channel</dt>
-        <dd>{{ caseItem.channel }}</dd>
-      </div>
-      <div>
-        <dt>Loan officer</dt>
-        <dd>{{ caseItem.loanOfficer }}</dd>
-      </div>
+    <h3 class="section-title">Loan Details</h3>
+    <dl class="detail-list">
+      <div><dt>Product</dt>   <dd>{{ caseItem.product }}</dd></div>
+      <div><dt>Purpose</dt>   <dd>{{ caseItem.purpose }}</dd></div>
+      <div><dt>Channel</dt>   <dd>{{ caseItem.channel }}</dd></div>
+      <div><dt>Loan Officer</dt><dd>{{ caseItem.loanOfficer }}</dd></div>
+      <div><dt>Processor</dt> <dd>{{ caseItem.processor }}</dd></div>
+      <div><dt>Underwriter</dt><dd>{{ caseItem.underwriter }}</dd></div>
     </dl>
   </div>
 
+  <!-- Property -->
   <div class="detail-section">
-    <h3>Property</h3>
-    <dl>
-      <div>
-        <dt>Address</dt>
-        <dd>{{ caseItem.propertyAddress }}</dd>
-      </div>
-      <div>
-        <dt>Type</dt>
-        <dd>{{ caseItem.propertyType }}</dd>
-      </div>
-      <div>
-        <dt>Occupancy</dt>
-        <dd>{{ caseItem.occupancy }}</dd>
-      </div>
+    <h3 class="section-title">Property</h3>
+    <dl class="detail-list">
+      <div><dt>Address</dt>   <dd>{{ caseItem.propertyAddress }}</dd></div>
+      <div><dt>Type</dt>      <dd>{{ caseItem.propertyType }}</dd></div>
+      <div><dt>Occupancy</dt> <dd>{{ caseItem.occupancy }}</dd></div>
     </dl>
   </div>
 
+  <!-- Milestones Timeline -->
   <div class="detail-section">
-    <h3>Milestones</h3>
-    <ol class="milestones">
-      <li>
-        <span>Submitted</span>
-        <strong>{{ caseItem.submitted | date: 'MMM d, y' }}</strong>
+    <h3 class="section-title">Milestones</h3>
+    <ol class="timeline">
+      <li class="timeline-item done">
+        <div class="tl-marker"></div>
+        <div class="tl-body">
+          <span>Submitted</span>
+          <strong>{{ caseItem.submitted | date: 'MMM d, y' }}</strong>
+        </div>
       </li>
-      <li>
-        <span>Appraisal</span>
-        <strong>{{ caseItem.appraisal }}</strong>
+      <li class="timeline-item" [class.done]="caseItem.appraisal === 'Received' || caseItem.appraisal === 'Waiver accepted'">
+        <div class="tl-marker"></div>
+        <div class="tl-body">
+          <span>Appraisal</span>
+          <strong>{{ caseItem.appraisal }}</strong>
+        </div>
       </li>
-      <li>
-        <span>Title</span>
-        <strong>{{ caseItem.title }}</strong>
+      <li class="timeline-item" [class.done]="caseItem.title === 'Clear'">
+        <div class="tl-marker"></div>
+        <div class="tl-body">
+          <span>Title</span>
+          <strong>{{ caseItem.title }}</strong>
+        </div>
       </li>
-      <li>
-        <span>Target close</span>
-        <strong>{{ caseItem.targetClose | date: 'MMM d, y' }}</strong>
+      <li class="timeline-item">
+        <div class="tl-marker tl-target"></div>
+        <div class="tl-body">
+          <span>Target Close</span>
+          <strong>{{ caseItem.targetClose | date: 'MMM d, y' }}</strong>
+        </div>
       </li>
     </ol>
   </div>
 
+  <!-- Next Action -->
   <div class="action-panel">
-    <span>Next action</span>
-    <p>{{ caseItem.nextAction }}</p>
-    <a class="open-case" [routerLink]="['/cases', caseItem.id]">Open Case</a>
+    <div class="action-header">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <span>Next Action</span>
+    </div>
+    <p class="action-text">{{ caseItem.nextAction }}</p>
+    <a class="open-case-btn" [routerLink]="['/cases', caseItem.id]">
+      Open Full Case
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
   </div>
 
+  <!-- Notes -->
   <div class="detail-section">
-    <h3>Notes</h3>
-    <p class="notes">{{ caseItem.notes }}</p>
-    <p class="updated">Last updated {{ caseItem.lastUpdated | date: 'MMM d, h:mm a' }}</p>
+    <h3 class="section-title">Notes</h3>
+    <p class="notes-text">{{ caseItem.notes }}</p>
+    <p class="updated-at">Last updated {{ caseItem.lastUpdated | date: 'MMM d, h:mm a' }}</p>
   </div>
+
 </section>

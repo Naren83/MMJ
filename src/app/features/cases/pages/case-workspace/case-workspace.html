@@ -1,60 +1,213 @@
 <main class="case-shell">
+
+  <!-- ── Left Tool Rail ────────────────────────────────── -->
   <aside class="case-tools" aria-label="Case tools">
-    <a class="back-link" routerLink="/">Overview</a>
-    <button type="button" class="tool-button" [class.active]="documentPanelOpen()" aria-label="Documents" title="Documents" (click)="toggleDocumentPanel()">DOCS</button>
+
+    <a class="back-link" routerLink="/" title="Back to Overview">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      <span>Back</span>
+    </a>
+
+    <div class="tool-separator"></div>
+
+    <button
+      type="button"
+      class="tool-button"
+      [class.active]="documentPanelOpen()"
+      title="Documents"
+      aria-label="Toggle document panel"
+      (click)="toggleDocumentPanel()"
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <span>Docs</span>
+    </button>
+
+    <button
+      type="button"
+      class="tool-button"
+      [class.active]="notesPanelOpen()"
+      title="Notes"
+      aria-label="Toggle notes panel"
+      (click)="toggleNotesPanel()"
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      <span>Notes</span>
+    </button>
+
+    <button
+      type="button"
+      class="tool-button"
+      [class.active]="historyPanelOpen()"
+      title="History"
+      aria-label="Toggle audit history panel"
+      (click)="toggleHistoryPanel()"
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>History</span>
+    </button>
+
+    <div class="tool-separator"></div>
+
+    <button
+      type="button"
+      class="tool-button"
+      title="Share"
+      aria-label="Share case"
+      (click)="openShareModal()"
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
+      <span>Share</span>
+    </button>
+
   </aside>
 
-  @if (documentPanelOpen()) {
-    <app-document-panel
-      [applicants]="applicants()"
-      [documents]="documents()"
-      [selectedDocumentId]="previewDocumentId()"
-      (documentAdded)="addDocument($event)"
-      (documentDeleted)="deleteDocument($event)"
-      (documentPreviewed)="previewDocumentFromPanel($event)"
-    />
-  }
+  <!-- ── Right: Tool Drawer + Workspace ────────────────── -->
+  <div class="workspace-outer">
 
-  <section class="workspace-layout" [class.with-preview]="previewDocument()">
-    @if (previewDocument(); as document) {
-      <app-document-preview-panel
-        [document]="document"
-        [hasPrevious]="previewDocumentIndex() > 0"
-        [hasNext]="previewDocumentIndex() < documents().length - 1"
-        (closed)="previewDocumentId.set(undefined)"
-        (previous)="previewPreviousDocument()"
-        (next)="previewNextDocument()"
+    <!-- Document Sidebar Panel -->
+    @if (documentPanelOpen()) {
+      <app-document-panel
+        [applicants]="applicants()"
+        [documents]="documents()"
+        [selectedDocumentId]="previewDocumentId()"
+        (documentAdded)="addDocument($event)"
+        (documentDeleted)="deleteDocument($event)"
+        (documentPreviewed)="previewDocumentFromPanel($event)"
       />
     }
 
-    <section class="workspace">
-      <header class="workspace-header">
-        <div>
-          <p class="eyebrow">{{ caseItem.id }}</p>
-          <h1>{{ caseItem.borrower }}</h1>
-          <p class="case-context">
-            {{ caseItem.product }} · {{ caseItem.propertyAddress }}
-          </p>
-        </div>
-        <div class="case-status">
-          <span class="priority priority-{{ caseItem.priority.toLowerCase() }}">{{ caseItem.priority }}</span>
-          <strong>{{ caseItem.status }}</strong>
-        </div>
-      </header>
+    <!-- Notes Drawer Panel -->
+    @if (notesPanelOpen()) {
+      <app-notes-panel
+        [caseId]="caseItem.id"
+        (closed)="toggleNotesPanel()"
+      />
+    }
 
-      <section class="process-card" aria-label="Mortgage review process">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Process Flow</p>
-            <h2>{{ activeStep().label }}</h2>
+    <!-- History Drawer Panel -->
+    @if (historyPanelOpen()) {
+      <app-history-panel
+        [caseId]="caseItem.id"
+        (closed)="toggleHistoryPanel()"
+      />
+    }
+
+    <!-- Main content + optional document preview split -->
+    <section class="workspace-layout" [class.with-preview]="previewDocument()">
+
+      @if (previewDocument(); as document) {
+        <app-document-preview-panel
+          [document]="document"
+          [hasPrevious]="previewDocumentIndex() > 0"
+          [hasNext]="previewDocumentIndex() < documents().length - 1"
+          (closed)="previewDocumentId.set(undefined)"
+          (previous)="previewPreviousDocument()"
+          (next)="previewNextDocument()"
+        />
+      }
+
+      <section class="workspace anim-fade-up">
+
+        <!-- ── Case Header ──────────────────────────────── -->
+        <header class="workspace-header">
+          <div class="header-top">
+            <div>
+              <!-- Breadcrumb -->
+              <nav class="breadcrumb" aria-label="Breadcrumb">
+                <a routerLink="/">Cases</a>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg>
+                <span>{{ caseItem.id }}</span>
+              </nav>
+
+              <span class="case-id-label">{{ caseItem.id }}</span>
+              <h1>{{ caseItem.borrower }}</h1>
+              <p class="case-context">
+                <span>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>
+                  {{ caseItem.product }}
+                </span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.3"><path d="m9 18 6-6-6-6"/></svg>
+                <span>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                  {{ caseItem.propertyAddress }}
+                </span>
+              </p>
+            </div>
+
+            <div class="case-status-block">
+              <span class="priority-badge priority-{{ caseItem.priority.toLowerCase() }}">
+                @if (caseItem.priority === 'High') { <span class="dot"></span> }
+                {{ caseItem.priority }} Priority
+              </span>
+              <span class="status-badge">{{ caseItem.status }}</span>
+            </div>
           </div>
-          <span>{{ caseItem.slaHoursRemaining }}h SLA</span>
+
+          <!-- Key Stats Strip -->
+          <dl class="header-stats">
+            <div class="hstat">
+              <dt>Loan Amount</dt>
+              <dd>{{ caseItem.loanAmount | currency: 'USD':'symbol':'1.0-0' }}</dd>
+            </div>
+            <div class="hstat">
+              <dt>LTV</dt>
+              <dd>{{ caseItem.ltv | percent: '1.0-0' }}</dd>
+            </div>
+            <div class="hstat">
+              <dt>Rate</dt>
+              <dd>{{ caseItem.rate }}%</dd>
+            </div>
+            <div class="hstat">
+              <dt>Open Conditions</dt>
+              <dd>{{ caseItem.conditionsOpen }}</dd>
+            </div>
+            <div class="hstat">
+              <dt>Docs Missing</dt>
+              <dd>{{ caseItem.documentsMissing }}</dd>
+            </div>
+            <div class="hstat">
+              <dt>Target Close</dt>
+              <dd>{{ caseItem.targetClose | date: 'MMM d, y' }}</dd>
+            </div>
+          </dl>
+        </header>
+
+        <!-- ── Process Flow + Step Content ─────────────── -->
+        <div class="workspace-body">
+
+          <div class="process-card">
+            <div class="process-card-header">
+              <div>
+                <p class="eyebrow">Process Flow</p>
+                <h2>{{ activeStep().label }}</h2>
+              </div>
+              <span class="sla-chip"
+                [class.sla-urgent]="caseItem.slaHoursRemaining <= 8"
+                [class.sla-warning]="caseItem.slaHoursRemaining > 8 && caseItem.slaHoursRemaining <= 24"
+                [class.sla-ok]="caseItem.slaHoursRemaining > 24">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                {{ caseItem.slaHoursRemaining }}h SLA remaining
+              </span>
+            </div>
+            <div class="process-flow-wrap">
+              <app-process-flow [steps]="steps()" (stepSelected)="selectStep($event)" />
+            </div>
+          </div>
+
+          <app-process-step-content [activeStepId]="activeStepId()" [caseItem]="caseItem" />
+
         </div>
-
-        <app-process-flow [steps]="steps()" (stepSelected)="selectStep($event)" />
       </section>
-
-      <app-process-step-content [activeStepId]="activeStepId()" [caseItem]="caseItem" />
     </section>
-  </section>
+  </div>
+
+  <!-- Share Modal -->
+  @if (shareModalOpen()) {
+    <app-share-modal
+      [caseId]="caseItem.id"
+      [borrower]="caseItem.borrower"
+      (closed)="closeShareModal()"
+    />
+  }
+
 </main>

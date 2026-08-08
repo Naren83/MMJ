@@ -1,0 +1,107 @@
+<div class="closing-page anim-fade-up">
+
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Settlement Operations</p>
+      <h1>Closing Desk</h1>
+    </div>
+  </header>
+
+  <!-- Summary -->
+  <div class="closing-summary">
+    <div class="cls-card cls-total">
+      <span class="cls-label">Total Closings</span>
+      <strong class="cls-value">{{ summary().total }}</strong>
+    </div>
+    <div class="cls-card cls-week">
+      <span class="cls-label">This Week</span>
+      <strong class="cls-value">{{ summary().thisWeek }}</strong>
+    </div>
+    <div class="cls-card cls-wire">
+      <span class="cls-label">Awaiting Wire</span>
+      <strong class="cls-value">{{ summary().awaitingWire }}</strong>
+    </div>
+    <div class="cls-card cls-hold">
+      <span class="cls-label">On Hold</span>
+      <strong class="cls-value">{{ summary().onHold }}</strong>
+    </div>
+    <div class="cls-card cls-funded">
+      <span class="cls-label">Funded</span>
+      <strong class="cls-value">{{ summary().funded }}</strong>
+    </div>
+  </div>
+
+  <!-- Closing Cards -->
+  <div class="closing-grid">
+    @for (item of closings(); track trackItem(0, item)) {
+      <article class="closing-card" [class.on-hold]="item.status === 'On Hold'" [class.funded]="item.status === 'Funded'">
+
+        <div class="cc-header">
+          <div>
+            <a class="cc-case-id" [routerLink]="['/cases', item.caseId]">{{ item.caseId }}</a>
+            <h2 class="cc-borrower">{{ item.borrower }}</h2>
+          </div>
+          <span class="closing-status-chip status-{{ item.status.toLowerCase().replaceAll(' ', '-') }}">{{ item.status }}</span>
+        </div>
+
+        <div class="cc-meta">
+          <div class="cc-meta-item">
+            <span>Closing Date</span>
+            <strong>{{ item.closingDate | date: 'MMM d, y' }}</strong>
+          </div>
+          <div class="cc-meta-item">
+            <span>Loan Amount</span>
+            <strong>{{ item.loanAmount | currency: 'USD':'symbol':'1.0-0' }}</strong>
+          </div>
+          <div class="cc-meta-item">
+            <span>Closing Agent</span>
+            <strong>{{ item.closingAgent }}</strong>
+          </div>
+          <div class="cc-meta-item">
+            <span>Title Company</span>
+            <strong>{{ item.titleCompany }}</strong>
+          </div>
+        </div>
+
+        <!-- Checklist -->
+        <div class="cc-checklist">
+          <button class="check-item" [class.checked]="item.cdSent" (click)="toggle(item, 'cdSent')">
+            <span class="check-box" [class.checked]="item.cdSent">
+              @if (item.cdSent) { <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> }
+            </span>
+            <span>CD Sent</span>
+          </button>
+          <button class="check-item" [class.checked]="item.wireConfirmed" (click)="toggle(item, 'wireConfirmed')">
+            <span class="check-box" [class.checked]="item.wireConfirmed">
+              @if (item.wireConfirmed) { <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> }
+            </span>
+            <span>Wire Confirmed</span>
+          </button>
+          <button class="check-item" [class.checked]="item.docsReturned" (click)="toggle(item, 'docsReturned')">
+            <span class="check-box" [class.checked]="item.docsReturned">
+              @if (item.docsReturned) { <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> }
+            </span>
+            <span>Docs Returned</span>
+          </button>
+        </div>
+
+        @if (item.notes) {
+          <div class="cc-notes">{{ item.notes }}</div>
+        }
+
+        <!-- Status Update -->
+        <div class="cc-actions">
+          @for (s of statusOrder; track s) {
+            <button
+              class="status-btn"
+              [class.current]="item.status === s"
+              (click)="updateStatus(item, s)"
+            >{{ s }}</button>
+          }
+        </div>
+
+      </article>
+    }
+  </div>
+
+</div>

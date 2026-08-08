@@ -2,60 +2,85 @@
   <div class="section-heading">
     <div>
       <p class="eyebrow">Queue</p>
-      <h2>{{ cases.length }} cases</h2>
+      <h2>{{ cases.length }} {{ cases.length === 1 ? 'case' : 'cases' }}</h2>
     </div>
-    <span class="timestamp">Updated today</span>
+    <span class="timestamp">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Updated today
+    </span>
   </div>
 
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
-          <th>Case</th>
+          <th>Case / Borrower</th>
           <th>Status</th>
-          <th>Loan</th>
-          <th>Owner</th>
-          <th>Target</th>
+          <th>Loan Details</th>
+          <th>Team</th>
+          <th>Target Close</th>
           <th>Conditions</th>
         </tr>
       </thead>
       <tbody>
         @for (caseItem of cases; track caseItem.id) {
           <tr
+            class="case-row"
             [class.selected]="caseItem.id === selectedCaseId"
             [routerLink]="['/cases', caseItem.id]"
           >
+            <!-- Case ID + Borrower -->
             <td>
-              <a class="case-link" [routerLink]="['/cases', caseItem.id]">
-                <strong>{{ caseItem.id }}</strong>
-                <span>{{ caseItem.borrower }}</span>
+              <a class="case-link" [routerLink]="['/cases', caseItem.id]" (click)="$event.stopPropagation()">
+                <strong class="case-id">{{ caseItem.id }}</strong>
+                <span class="case-borrower">{{ caseItem.borrower }}{{ caseItem.coBorrower ? ' & ' + caseItem.coBorrower : '' }}</span>
               </a>
             </td>
+
+            <!-- Status -->
             <td>
-              <span class="status status-{{ statusKey(caseItem.status) }}">
+              <span class="status-chip status-{{ statusKey(caseItem.status) }}">
                 {{ caseItem.status }}
               </span>
             </td>
+
+            <!-- Loan -->
             <td>
               <strong>{{ caseItem.loanAmount | currency: 'USD':'symbol':'1.0-0' }}</strong>
-              <span>{{ caseItem.product }}</span>
+              <span class="sub">{{ caseItem.product }}</span>
             </td>
+
+            <!-- Team -->
             <td>
               <strong>{{ caseItem.processor }}</strong>
-              <span>{{ caseItem.underwriter }}</span>
+              <span class="sub">{{ caseItem.underwriter }}</span>
             </td>
+
+            <!-- Target + SLA -->
             <td>
               <strong>{{ caseItem.targetClose | date: 'MMM d' }}</strong>
-              <span>{{ caseItem.slaHoursRemaining }}h SLA</span>
+              <span class="sla-chip" [class.sla-urgent]="caseItem.slaHoursRemaining <= 8" [class.sla-warning]="caseItem.slaHoursRemaining > 8 && caseItem.slaHoursRemaining <= 24">
+                {{ caseItem.slaHoursRemaining }}h SLA
+              </span>
             </td>
+
+            <!-- Conditions + Missing Docs -->
             <td>
-              <strong>{{ caseItem.conditionsOpen }}</strong>
-              <span>{{ caseItem.documentsMissing }} docs missing</span>
+              <div class="conditions">
+                <span class="cond-count" [class.cond-none]="caseItem.conditionsOpen === 0">
+                  {{ caseItem.conditionsOpen }}
+                </span>
+                <span class="sub">{{ caseItem.documentsMissing }} docs missing</span>
+              </div>
             </td>
           </tr>
         } @empty {
           <tr>
-            <td colspan="6" class="empty">No cases match this search.</td>
+            <td colspan="6" class="empty-state">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              <p>No cases match your filters.</p>
+              <span>Try adjusting your search or clearing filters.</span>
+            </td>
           </tr>
         }
       </tbody>

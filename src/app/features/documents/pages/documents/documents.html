@@ -1,0 +1,163 @@
+<div class="documents-page anim-fade-up">
+
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Document Repository</p>
+      <h1>Documents</h1>
+    </div>
+    <div class="header-actions">
+      <span class="live-indicator"><span class="live-dot"></span> Vault Synchronized</span>
+    </div>
+  </header>
+
+  <!-- KPI Summary -->
+  <div class="doc-summary">
+    <div class="ds-card ds-total">
+      <div class="ds-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      </div>
+      <div class="ds-body">
+        <span class="ds-label">Total Files</span>
+        <strong class="ds-value">{{ summary().total }}</strong>
+      </div>
+    </div>
+
+    <div class="ds-card ds-verified">
+      <div class="ds-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="ds-body">
+        <span class="ds-label">Verified</span>
+        <strong class="ds-value">{{ summary().verified }}</strong>
+      </div>
+    </div>
+
+    <div class="ds-card ds-review">
+      <div class="ds-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <div class="ds-body">
+        <span class="ds-label">Needs Review</span>
+        <strong class="ds-value">{{ summary().needsReview }}</strong>
+      </div>
+    </div>
+
+    <div class="ds-card ds-uploaded">
+      <div class="ds-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      </div>
+      <div class="ds-body">
+        <span class="ds-label">Pending Classify</span>
+        <strong class="ds-value">{{ summary().uploaded }}</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Toolbar -->
+  <div class="doc-filters">
+    <div class="search-wrap">
+      <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input class="search-input" type="search" placeholder="Search by file name, applicant, or case ID…" [ngModel]="search()" (ngModelChange)="search.set($event)" />
+    </div>
+
+    <div class="pill-row">
+      @for (s of statuses; track s) {
+        <button class="pill" [class.active]="status() === s" (click)="status.set(s)">{{ s }}</button>
+      }
+    </div>
+
+    <div class="custom-select-wrap">
+      <app-custom-select
+        [options]="docTypes()"
+        [value]="docType()"
+        (valueChange)="docType.set($event)"
+      />
+    </div>
+  </div>
+
+  <!-- Documents Table -->
+  <div class="doc-table-wrap">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Document</th>
+          <th>Case / Applicant</th>
+          <th>Type</th>
+          <th>Uploaded By</th>
+          <th>Date</th>
+          <th>Size</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (doc of filteredDocs(); track trackDoc(0, doc)) {
+          <tr class="doc-row">
+            <!-- Document Name & File -->
+            <td>
+              <div class="file-cell">
+                <span class="file-icon file-{{ doc.fileType.toLowerCase() }}">
+                  @if (doc.fileType === 'PDF') { PDF } @else { DOC }
+                </span>
+                <div>
+                  <strong class="file-name">{{ doc.documentName }}</strong>
+                  <span class="file-sub">{{ doc.fileName }}</span>
+                </div>
+              </div>
+            </td>
+
+            <!-- Case / Applicant -->
+            <td>
+              <a class="case-link" [routerLink]="['/cases', doc.caseId]">{{ doc.caseId }}</a>
+              <span class="applicant-sub">{{ doc.applicantName }}</span>
+            </td>
+
+            <!-- Doc Type -->
+            <td><span class="type-chip">{{ doc.documentType }}</span></td>
+
+            <!-- Uploaded By -->
+            <td><span class="uploader-name">{{ doc.uploadedBy }}</span></td>
+
+            <!-- Date -->
+            <td><span class="doc-date">{{ doc.uploadedAt | date: 'MMM d, h:mm a' }}</span></td>
+
+            <!-- Size -->
+            <td><span class="doc-size">{{ doc.fileSize }}</span></td>
+
+            <!-- Status Chip -->
+            <td>
+              <span class="status-chip status-{{ doc.status.toLowerCase().replaceAll(' ', '-') }}">
+                {{ doc.status }}
+              </span>
+            </td>
+
+            <!-- Actions -->
+            <td>
+              <div class="action-row">
+                <a class="action-btn btn-view" [routerLink]="['/cases', doc.caseId]" title="View in Workspace">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </a>
+                @if (doc.status !== 'Verified') {
+                  <button type="button" class="action-btn btn-verify" title="Verify Document" (click)="markVerified(doc)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                }
+                <button type="button" class="action-btn btn-del" title="Delete Document" (click)="deleteDoc(doc)">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="8" class="empty-state">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <p>No documents found matching your criteria.</p>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+</div>

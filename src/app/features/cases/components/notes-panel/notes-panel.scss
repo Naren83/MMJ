@@ -1,0 +1,229 @@
+:host {
+  display: block;
+  min-width: 0;
+  border-right: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.tool-panel {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  height: 100dvh;
+  width: 360px;
+  min-width: 0;
+  background: var(--panel);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel-subtle);
+
+  h2 { font-size: 1.1rem; font-weight: 800; margin: 0; }
+}
+
+.eyebrow {
+  margin: 0 0 3px;
+  font-size: 0.70rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent-strong);
+}
+
+.close-btn {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+
+  &:hover { border-color: var(--danger); color: var(--danger); }
+}
+
+/* ── Add Note Box ────────────────────────────────────────── */
+.add-note-box {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line);
+  background: #f8fafc;
+}
+
+.category-selector {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.cat-pill {
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--line);
+  font-size: 0.70rem;
+  font-weight: 700;
+  color: var(--muted);
+  background: var(--panel);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+
+  &:hover { border-color: var(--accent); color: var(--accent); }
+
+  &.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+}
+
+textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font: inherit;
+  font-size: 0.84rem;
+  color: var(--text);
+  background: var(--panel);
+  resize: none;
+  outline: none;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12);
+  }
+}
+
+.form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.author-tag {
+  font-size: 0.72rem;
+  color: var(--muted);
+
+  strong { color: var(--text); }
+}
+
+.post-btn {
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.76rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+
+  &:hover:not(:disabled) { background: var(--accent-hover); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+/* ── Notes List ──────────────────────────────────────────── */
+.notes-list {
+  padding: 16px 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.note-card {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  box-shadow: var(--shadow-sm);
+}
+
+.note-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.author-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar-sm {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  color: #fff;
+  font-size: 0.70rem;
+  font-weight: 800;
+}
+
+.author-info strong { display: block; font-size: 0.80rem; color: var(--text); line-height: 1.1; }
+.author-info small  { font-size: 0.68rem; color: var(--muted); }
+
+.note-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.note-cat {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+
+  &.cat-underwriting { background: #eff6ff; color: #1d4ed8; }
+  &.cat-risk-flag   { background: var(--danger-bg); color: var(--danger); }
+  &.cat-condition   { background: var(--warning-bg); color: var(--warning); }
+  &.cat-borrower    { background: var(--accent-light); color: var(--accent); }
+}
+
+.del-btn {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  color: var(--muted-light);
+  cursor: pointer;
+
+  &:hover { color: var(--danger); }
+}
+
+.note-text {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0 0 6px;
+}
+
+.note-time {
+  font-size: 0.70rem;
+  color: var(--muted-light);
+}
+
+.empty-notes {
+  text-align: center;
+  padding: 40px 16px;
+  color: var(--muted);
+
+  p { font-size: 0.88rem; font-weight: 600; margin: 0 0 4px; }
+  span { font-size: 0.76rem; }
+}

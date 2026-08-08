@@ -1,0 +1,203 @@
+.filter-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Search */
+.search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 220px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  color: var(--muted);
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 36px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  color: var(--text);
+  background: var(--panel-subtle);
+  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+  outline: none;
+
+  &::placeholder { color: var(--muted-light); }
+
+  &:focus {
+    border-color: var(--accent);
+    background: var(--panel);
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12);
+  }
+
+  /* Remove default search clear button */
+  &::-webkit-search-cancel-button { display: none; }
+}
+
+.clear-btn {
+  position: absolute;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--line-strong);
+  color: var(--muted);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+
+  &:hover {
+    background: var(--muted);
+    color: var(--panel);
+  }
+}
+
+/* Divider */
+.divider {
+  width: 1px;
+  height: 32px;
+  background: var(--line);
+  flex-shrink: 0;
+
+  @media (max-width: 900px) { display: none; }
+}
+
+/* Filter groups */
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+/* Status / Priority Pills */
+.pill-row {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  padding: 5px 11px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-full);
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+
+  &:hover {
+    border-color: var(--line-strong);
+    color: var(--text);
+    background: var(--panel-subtle);
+  }
+
+  &.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+    font-weight: 700;
+  }
+
+  /* Status-colored active pills */
+  &.active[data-status="new"]                  { color: var(--status-new-text);    background: var(--status-new-bg);    border-color: var(--status-new-text); }
+  &.active[data-status="in-review"]            { color: var(--status-review-text); background: var(--status-review-bg); border-color: var(--status-review-text); }
+  &.active[data-status="conditional-approval"] { color: var(--status-cond-text);   background: var(--status-cond-bg);   border-color: var(--status-cond-text); }
+  &.active[data-status="clear-to-close"]       { color: var(--status-ctc-text);    background: var(--status-ctc-bg);    border-color: var(--status-ctc-text); }
+
+  /* Priority-colored active pills */
+  &.active[data-priority="high"]   { color: var(--danger);  background: var(--danger-bg);  border-color: var(--danger); }
+  &.active[data-priority="medium"] { color: var(--warning); background: var(--warning-bg); border-color: var(--warning); }
+  &.active[data-priority="low"]    { color: var(--success); background: var(--success-bg); border-color: var(--success); }
+}
+
+/* Channel Select */
+.channel-select {
+  padding: 6px 28px 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--panel-subtle);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  transition: border-color var(--transition-fast);
+  outline: none;
+
+  &:focus { border-color: var(--accent); }
+}
+
+/* Active filter count + Clear All */
+.filter-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  animation: fadeIn 0.2s ease both;
+}
+
+.active-badge {
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-light);
+}
+
+.clear-all-btn {
+  padding: 5px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-full);
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+
+  &:hover {
+    border-color: var(--danger);
+    color: var(--danger);
+    background: var(--danger-bg);
+  }
+}
+
+@media (max-width: 760px) {
+  .filter-toolbar { gap: 8px; }
+  .search-wrap { min-width: 100%; }
+}

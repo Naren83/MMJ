@@ -1,0 +1,195 @@
+<div class="pipeline-page anim-fade-up">
+
+  <!-- Header -->
+  <header class="page-header">
+    <div class="header-main">
+      <p class="eyebrow">Interactive Workflow</p>
+      <h1>Pipeline Kanban</h1>
+    </div>
+    <div class="header-actions">
+      <div class="live-indicator">
+        <span class="live-dot"></span>
+        <span class="live-text">Realtime Synchronization</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Summary KPI Cards -->
+  <div class="pipeline-summary">
+    <div class="ps-card ps-total">
+      <div class="ps-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" x2="12" y1="1" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <div class="ps-body">
+        <span class="ps-label">Total Portfolio</span>
+        <strong class="ps-value">{{ summary().totalLoanAmount | currency: 'USD':'symbol':'1.0-0' }}</strong>
+      </div>
+    </div>
+
+    <div class="ps-card ps-urgent">
+      <div class="ps-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+      </div>
+      <div class="ps-body">
+        <span class="ps-label">High Priority</span>
+        <strong class="ps-value">{{ summary().urgentCases }} Cases</strong>
+      </div>
+    </div>
+
+    <div class="ps-card ps-conditions">
+      <div class="ps-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      </div>
+      <div class="ps-body">
+        <span class="ps-label">Open Conditions</span>
+        <strong class="ps-value">{{ summary().openConditions }} Items</strong>
+      </div>
+    </div>
+
+    <div class="ps-card ps-closing">
+      <div class="ps-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div class="ps-body">
+        <span class="ps-label">SLA Watch (&le;12h)</span>
+        <strong class="ps-value">{{ summary().closingSoon }} Cases</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Kanban Board -->
+  <div class="kanban-board">
+    @for (stage of stages(); track stage.status) {
+      <div
+        class="kanban-column"
+        [class.drag-over]="dragOverStage() === stage.status"
+        (dragover)="dragOver(stage.status, $event)"
+        (dragleave)="dragLeave(stage.status)"
+        (drop)="drop(stage.status, $event)"
+      >
+        <!-- Column Header -->
+        <div class="column-header status-border-{{ stage.status.toLowerCase().replaceAll(' ', '-') }}">
+          <div class="column-header-top">
+            <div class="column-title">
+              <span class="column-dot status-dot-{{ stage.status.toLowerCase().replaceAll(' ', '-') }}"></span>
+              <h3>{{ stage.label }}</h3>
+            </div>
+            <span class="column-count">{{ stage.cases.length }}</span>
+          </div>
+          <div class="column-header-sub">
+            <span class="volume-label">Volume</span>
+            <span class="volume-value">{{ getStageVolume(stage.cases) | currency: 'USD':'symbol':'1.0-0' }}</span>
+          </div>
+        </div>
+
+        <!-- Cards Container -->
+        <div class="cards-wrap">
+          @for (c of stage.cases; track trackCase(0, c)) {
+            <div
+              class="kanban-card"
+              [class.is-dragging]="draggingId() === c.id"
+              draggable="true"
+              (dragstart)="dragStart(c.id, $event)"
+              (dragend)="dragEnd()"
+            >
+              <!-- Card Top Row -->
+              <div class="card-top">
+                <a class="card-id" [routerLink]="['/cases', c.id]" title="Open Workspace">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+                  {{ c.id }}
+                </a>
+                <span class="card-priority priority-{{ c.priority.toLowerCase() }}">
+                  @if (c.priority === 'High') { <span class="priority-dot"></span> }
+                  {{ c.priority }}
+                </span>
+              </div>
+
+              <!-- Borrower & Loan Info -->
+              <div class="card-body">
+                <h4 class="card-borrower">
+                  {{ c.borrower }}
+                  @if (c.coBorrower) { <small>&amp; {{ c.coBorrower }}</small> }
+                </h4>
+                <p class="card-product">{{ c.product }}</p>
+              </div>
+
+              <!-- Financial Metrics Strip -->
+              <div class="card-metrics">
+                <div class="cm-item">
+                  <span class="cm-label">Loan</span>
+                  <strong class="cm-value">{{ c.loanAmount | currency: 'USD':'symbol':'1.0-0' }}</strong>
+                </div>
+                <div class="cm-item text-right">
+                  <span class="cm-label">LTV</span>
+                  <strong class="cm-value">{{ c.ltv * 100 | number: '1.0-0' }}%</strong>
+                </div>
+              </div>
+
+              <!-- Badges Row -->
+              <div class="card-badges">
+                <span class="card-sla"
+                  [class.sla-urgent]="c.slaHoursRemaining <= 8"
+                  [class.sla-warning]="c.slaHoursRemaining > 8 && c.slaHoursRemaining <= 24"
+                  [class.sla-ok]="c.slaHoursRemaining > 24">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  {{ c.slaHoursRemaining }}h SLA
+                </span>
+
+                @if (c.conditionsOpen > 0) {
+                  <span class="cond-badge" title="{{ c.conditionsOpen }} open conditions">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 11l3 3L22 4"/></svg>
+                    {{ c.conditionsOpen }}
+                  </span>
+                }
+              </div>
+
+              <!-- Footer with Quick Move & Processor -->
+              <div class="card-footer">
+                <div class="processor-info">
+                  <span class="avatar-mini">{{ c.processor[0] }}</span>
+                  <span class="processor-name">{{ c.processor }}</span>
+                </div>
+
+                <!-- Hover Quick Move Actions -->
+                <div class="quick-actions">
+                  @if (!isFirstStage(stage.status)) {
+                    <button
+                      type="button"
+                      class="quick-btn"
+                      title="Move Backward"
+                      (click)="moveStage(c.id, stage.status, 'prev', $event)"
+                    >
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    </button>
+                  }
+                  @if (!isLastStage(stage.status)) {
+                    <button
+                      type="button"
+                      class="quick-btn quick-btn-next"
+                      title="Advance Stage"
+                      (click)="moveStage(c.id, stage.status, 'next', $event)"
+                    >
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                  }
+                </div>
+              </div>
+
+            </div>
+          }
+
+          @if (stage.cases.length === 0) {
+            <div class="column-empty">
+              <div class="empty-icon-wrap">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" x2="21" y1="9" y2="9"/></svg>
+              </div>
+              <p>No active cases in this stage</p>
+              <span>Drag &amp; drop a case card here</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+</div>

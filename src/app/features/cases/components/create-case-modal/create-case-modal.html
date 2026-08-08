@@ -1,0 +1,203 @@
+<div class="modal-overlay" (click)="closed.emit()">
+  <div class="modal-card anim-scale-up" (click)="$event.stopPropagation()">
+
+    <!-- Header -->
+    <header class="modal-header">
+      <div>
+        <p class="eyebrow">Origination Wizard</p>
+        <h2>Create New Mortgage Case</h2>
+      </div>
+      <button type="button" class="close-btn" (click)="closed.emit()" aria-label="Close modal">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </header>
+
+    <!-- Step Indicator -->
+    <div class="step-indicator">
+      <div class="step-item" [class.active]="currentStep() === 1" [class.complete]="currentStep() > 1">
+        <span class="step-num">1</span>
+        <span>Applicant Info</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-item" [class.active]="currentStep() === 2" [class.complete]="currentStep() > 2">
+        <span class="step-num">2</span>
+        <span>Loan &amp; Financials</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-item" [class.active]="currentStep() === 3">
+        <span class="step-num">3</span>
+        <span>Property &amp; Team</span>
+      </div>
+    </div>
+
+    <!-- Form Content -->
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="modal-body">
+
+        <!-- ══ STEP 1: Applicant Info ═══════════════════════ -->
+        @if (currentStep() === 1) {
+          <div class="form-grid anim-fade-up">
+
+            <div class="form-field full-width">
+              <label>Primary Borrower Name <span class="req">*</span></label>
+              <input
+                type="text"
+                placeholder="e.g. Eleanor Vance"
+                formControlName="borrower"
+                [class.invalid]="form.get('borrower')?.invalid && form.get('borrower')?.touched"
+              />
+              @if (form.get('borrower')?.invalid && form.get('borrower')?.touched) {
+                <span class="field-error">Borrower name is required.</span>
+              }
+            </div>
+
+            <div class="form-field full-width">
+              <label>Co-Borrower Name (Optional)</label>
+              <input type="text" placeholder="e.g. Thomas Vance" formControlName="coBorrower" />
+            </div>
+
+            <div class="form-field">
+              <app-custom-select
+                label="Origination Channel *"
+                [options]="channels"
+                [value]="form.get('channel')?.value"
+                (valueChange)="updateSelect('channel', $event)"
+              />
+            </div>
+
+            <div class="form-field">
+              <app-custom-select
+                label="Assigned Loan Officer *"
+                [options]="loanOfficers"
+                [value]="form.get('loanOfficer')?.value"
+                (valueChange)="updateSelect('loanOfficer', $event)"
+              />
+            </div>
+
+          </div>
+        }
+
+        <!-- ══ STEP 2: Loan & Financials ════════════════════ -->
+        @if (currentStep() === 2) {
+          <div class="form-grid anim-fade-up">
+
+            <div class="form-field">
+              <label>Requested Loan Amount ($) <span class="req">*</span></label>
+              <input type="number" formControlName="loanAmount" placeholder="450000" />
+            </div>
+
+            <div class="form-field">
+              <label>LTV Ratio (%) <span class="req">*</span></label>
+              <input type="number" formControlName="ltv" placeholder="80" />
+            </div>
+
+            <div class="form-field">
+              <label>Interest Rate (%) <span class="req">*</span></label>
+              <input type="number" step="0.125" formControlName="rate" placeholder="6.125" />
+            </div>
+
+            <div class="form-field">
+              <app-custom-select
+                label="Case Priority *"
+                [options]="priorities"
+                [value]="form.get('priority')?.value"
+                (valueChange)="updateSelect('priority', $event)"
+              />
+            </div>
+
+            <div class="form-field full-width">
+              <app-custom-select
+                label="Loan Product *"
+                [options]="products"
+                [value]="form.get('product')?.value"
+                (valueChange)="updateSelect('product', $event)"
+              />
+            </div>
+
+            <div class="form-field full-width">
+              <app-custom-select
+                label="Loan Purpose *"
+                [options]="purposes"
+                [value]="form.get('purpose')?.value"
+                (valueChange)="updateSelect('purpose', $event)"
+              />
+            </div>
+
+          </div>
+        }
+
+        <!-- ══ STEP 3: Property & Team ══════════════════════ -->
+        @if (currentStep() === 3) {
+          <div class="form-grid anim-fade-up">
+
+            <div class="form-field full-width">
+              <label>Subject Property Address <span class="req">*</span></label>
+              <input type="text" placeholder="e.g. 742 Evergreen Terrace, Springfield, OR" formControlName="propertyAddress" />
+            </div>
+
+            <div class="form-field">
+              <app-custom-select
+                label="Property Type *"
+                [options]="propertyTypes"
+                [value]="form.get('propertyType')?.value"
+                (valueChange)="updateSelect('propertyType', $event)"
+              />
+            </div>
+
+            <div class="form-field">
+              <app-custom-select
+                label="Occupancy *"
+                [options]="occupancies"
+                [value]="form.get('occupancy')?.value"
+                (valueChange)="updateSelect('occupancy', $event)"
+              />
+            </div>
+
+            <div class="form-field">
+              <app-custom-select
+                label="Assigned Processor *"
+                [options]="processors"
+                [value]="form.get('processor')?.value"
+                (valueChange)="updateSelect('processor', $event)"
+              />
+            </div>
+
+            <div class="form-field">
+              <app-custom-select
+                label="Assigned Underwriter *"
+                [options]="underwriters"
+                [value]="form.get('underwriter')?.value"
+                (valueChange)="updateSelect('underwriter', $event)"
+              />
+            </div>
+
+            <div class="form-field full-width">
+              <label>Initial Risk Notes (Optional)</label>
+              <textarea rows="3" placeholder="Add any initial underwriting notes or risk flags..." formControlName="notes"></textarea>
+            </div>
+
+          </div>
+        }
+
+      </div>
+
+      <!-- Footer Controls -->
+      <footer class="modal-footer">
+        @if (currentStep() > 1) {
+          <button type="button" class="btn-secondary" (click)="prevStep()">Back</button>
+        }
+
+        <div class="footer-right">
+          <button type="button" class="btn-cancel" (click)="closed.emit()">Cancel</button>
+
+          @if (currentStep() < 3) {
+            <button type="button" class="btn-primary" (click)="nextStep()">Continue</button>
+          } @else {
+            <button type="submit" class="btn-primary btn-submit">Create Mortgage Case</button>
+          }
+        </div>
+      </footer>
+    </form>
+
+  </div>
+</div>

@@ -1,124 +1,225 @@
-<section class="review-panel" [attr.aria-label]="activeStepId">
+<section class="review-panel anim-fade-up" [attr.aria-label]="activeStepId">
   @switch (activeStepId) {
+
+    <!-- ══ SUMMARY ══════════════════════════════════════════ -->
     @case ('summary') {
       <div class="panel-header">
-        <p class="eyebrow">Case Snapshot</p>
-        <h2>Summary</h2>
-      </div>
-      <dl class="metric-grid">
         <div>
-          <dt>Requested loan</dt>
+          <p class="eyebrow">Case Snapshot</p>
+          <h2>Summary</h2>
+        </div>
+        <span class="step-owner-badge">Mid Office</span>
+      </div>
+
+      <div class="metric-grid">
+        <div class="metric-card metric-loan">
+          <div class="metric-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" x2="12" y1="1" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <dt>Requested Loan</dt>
           <dd>{{ caseItem.loanAmount | currency: 'USD':'symbol':'1.0-0' }}</dd>
         </div>
-        <div>
-          <dt>Loan to value</dt>
+        <div class="metric-card metric-ltv">
+          <div class="metric-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
+          </div>
+          <dt>Loan to Value</dt>
           <dd>{{ caseItem.ltv | percent: '1.0-0' }}</dd>
         </div>
-        <div>
+        <div class="metric-card metric-purpose">
+          <div class="metric-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </div>
           <dt>Purpose</dt>
           <dd>{{ caseItem.purpose }}</dd>
         </div>
-        <div>
-          <dt>Open conditions</dt>
-          <dd>{{ caseItem.conditionsOpen }}</dd>
+        <div class="metric-card metric-conditions">
+          <div class="metric-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <dt>Open Conditions</dt>
+          <dd [class.value-warn]="caseItem.conditionsOpen > 0">{{ caseItem.conditionsOpen }}</dd>
         </div>
-      </dl>
-      <div class="note-block">
-        <strong>Key risk flags</strong>
+      </div>
+
+      <div class="info-block info-risk">
+        <div class="info-block-header">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Key Risk Flags / Next Action
+        </div>
         <p>{{ caseItem.nextAction }}</p>
       </div>
+
+      <div class="info-block info-notes">
+        <div class="info-block-header">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/></svg>
+          Case Notes
+        </div>
+        <p>{{ caseItem.notes }}</p>
+      </div>
     }
 
+    <!-- ══ PERSONAL DETAILS ══════════════════════════════════ -->
     @case ('personal') {
       <div class="panel-header">
-        <p class="eyebrow">Applicant Review</p>
-        <h2>Personal Details</h2>
+        <div>
+          <p class="eyebrow">Applicant Review</p>
+          <h2>Personal Details</h2>
+        </div>
+        <span class="step-owner-badge">KYC Review</span>
       </div>
+
+      <div class="applicant-cards">
+        <div class="applicant-card">
+          <div class="applicant-avatar">{{ caseItem.borrower[0] }}</div>
+          <div class="applicant-info">
+            <span class="applicant-role">Primary Applicant</span>
+            <strong>{{ caseItem.borrower }}</strong>
+          </div>
+          <span class="doc-status doc-ok">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            ID Verified
+          </span>
+        </div>
+
+        @if (caseItem.coBorrower) {
+          <div class="applicant-card">
+            <div class="applicant-avatar co">{{ caseItem.coBorrower[0] }}</div>
+            <div class="applicant-info">
+              <span class="applicant-role">Co-Applicant</span>
+              <strong>{{ caseItem.coBorrower }}</strong>
+            </div>
+            <span class="doc-status doc-pending">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+              Docs Pending
+            </span>
+          </div>
+        }
+      </div>
+
       <dl class="detail-list">
-        <div>
-          <dt>Primary applicant</dt>
-          <dd>{{ caseItem.borrower }}</dd>
-        </div>
-        <div>
-          <dt>Co-applicant</dt>
-          <dd>{{ caseItem.coBorrower ?? 'None' }}</dd>
-        </div>
-        <div>
-          <dt>Channel</dt>
-          <dd>{{ caseItem.channel }}</dd>
-        </div>
-        <div>
-          <dt>Document verification</dt>
-          <dd>{{ caseItem.documentsMissing === 0 ? 'Complete' : caseItem.documentsMissing + ' missing' }}</dd>
-        </div>
+        <div><dt>Channel</dt>          <dd>{{ caseItem.channel }}</dd></div>
+        <div><dt>Loan Officer</dt>     <dd>{{ caseItem.loanOfficer }}</dd></div>
+        <div><dt>Processor</dt>        <dd>{{ caseItem.processor }}</dd></div>
+        <div><dt>Underwriter</dt>      <dd>{{ caseItem.underwriter }}</dd></div>
+        <div><dt>Doc Verification</dt> <dd [class.value-warn]="caseItem.documentsMissing > 0">
+          {{ caseItem.documentsMissing === 0 ? 'Complete ✓' : caseItem.documentsMissing + ' docs missing' }}
+        </dd></div>
+        <div><dt>Submitted</dt>        <dd>{{ caseItem.submitted | date: 'MMM d, y' }}</dd></div>
       </dl>
     }
 
+    <!-- ══ LIABILITIES ══════════════════════════════════════ -->
     @case ('liabilities') {
       <div class="panel-header">
-        <p class="eyebrow">Affordability</p>
-        <h2>External Liabilities</h2>
-      </div>
-      <dl class="metric-grid">
         <div>
+          <p class="eyebrow">Affordability</p>
+          <h2>External Liabilities</h2>
+        </div>
+        <span class="step-owner-badge">Credit Review</span>
+      </div>
+
+      <div class="metric-grid">
+        <div class="metric-card metric-loan">
+          <div class="metric-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
+          </div>
           <dt>Estimated DTI</dt>
           <dd>36%</dd>
         </div>
-        <div>
-          <dt>Verified debts</dt>
+        <div class="metric-card metric-ltv">
+          <div class="metric-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+          </div>
+          <dt>Verified Debts</dt>
           <dd>4</dd>
         </div>
-        <div>
-          <dt>Open discrepancies</dt>
-          <dd>{{ caseItem.conditionsOpen > 0 ? 1 : 0 }}</dd>
+        <div class="metric-card metric-conditions">
+          <div class="metric-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/></svg>
+          </div>
+          <dt>Discrepancies</dt>
+          <dd [class.value-warn]="caseItem.conditionsOpen > 0">{{ caseItem.conditionsOpen > 0 ? 1 : 0 }}</dd>
         </div>
-      </dl>
-      <div class="note-block">
-        <strong>Review focus</strong>
+      </div>
+
+      <div class="info-block info-risk">
+        <div class="info-block-header">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+          Review Focus
+        </div>
         <p>Validate bureau obligations against uploaded statements before clearing affordability conditions.</p>
       </div>
     }
 
+    <!-- ══ COLLATERAL ════════════════════════════════════════ -->
     @case ('collateral') {
       <div class="panel-header">
-        <p class="eyebrow">Security Review</p>
-        <h2>Collateral</h2>
+        <div>
+          <p class="eyebrow">Security Review</p>
+          <h2>Collateral</h2>
+        </div>
+        <span class="step-owner-badge">Valuation</span>
       </div>
+
+      <div class="property-card">
+        <div class="property-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <div class="property-details">
+          <strong>{{ caseItem.propertyAddress }}</strong>
+          <span>{{ caseItem.propertyType }} · {{ caseItem.occupancy }}</span>
+        </div>
+      </div>
+
       <dl class="detail-list">
         <div>
-          <dt>Property</dt>
-          <dd>{{ caseItem.propertyAddress }}</dd>
-        </div>
-        <div>
-          <dt>Type</dt>
-          <dd>{{ caseItem.propertyType }}</dd>
-        </div>
-        <div>
           <dt>Appraisal</dt>
-          <dd>{{ caseItem.appraisal }}</dd>
+          <dd [class.value-ok]="caseItem.appraisal === 'Received' || caseItem.appraisal === 'Waiver accepted'">{{ caseItem.appraisal }}</dd>
         </div>
         <div>
-          <dt>Title</dt>
-          <dd>{{ caseItem.title }}</dd>
+          <dt>Title Status</dt>
+          <dd [class.value-ok]="caseItem.title === 'Clear'" [class.value-warn]="caseItem.title !== 'Clear'">{{ caseItem.title }}</dd>
         </div>
+        <div><dt>LTV Ratio</dt>  <dd>{{ caseItem.ltv | percent: '1.0-0' }}</dd></div>
+        <div><dt>Rate</dt>       <dd>{{ caseItem.rate }}%</dd></div>
       </dl>
     }
 
+    <!-- ══ DECISION ══════════════════════════════════════════ -->
     @case ('decision') {
       <div class="panel-header">
-        <p class="eyebrow">Outcome</p>
-        <h2>Decision</h2>
+        <div>
+          <p class="eyebrow">Outcome</p>
+          <h2>Decision</h2>
+        </div>
+        <span class="step-owner-badge">Reviewer</span>
       </div>
+
       <div class="decision-grid">
-        <button type="button">Approve for next step</button>
-        <button type="button">Approve with conditions</button>
-        <button type="button">Return to front office</button>
-        <button type="button">Escalate</button>
+        <button type="button" class="decision-btn decision-approve">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Approve for Next Step
+        </button>
+        <button type="button" class="decision-btn decision-conditional">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 11l3 3L22 4"/></svg>
+          Approve with Conditions
+        </button>
+        <button type="button" class="decision-btn decision-return">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 12h18M3 12l6-6M3 12l6 6"/></svg>
+          Return to Front Office
+        </button>
+        <button type="button" class="decision-btn decision-escalate">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/></svg>
+          Escalate
+        </button>
       </div>
+
       <label class="comment-box">
-        Reviewer comments
-        <textarea rows="5">{{ caseItem.notes }}</textarea>
+        <span class="comment-label">Reviewer Comments</span>
+        <textarea rows="6" placeholder="Add your decision rationale, conditions, or notes…">{{ caseItem.notes }}</textarea>
       </label>
     }
+
   }
 </section>

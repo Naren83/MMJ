@@ -1,3 +1,4 @@
+import { CurrencyPipe, DatePipe, PercentPipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
@@ -6,6 +7,9 @@ import { DocumentPanel } from '../../components/document-panel/document-panel';
 import { DocumentPreviewPanel } from '../../components/document-preview-panel/document-preview-panel';
 import { ProcessFlow } from '../../components/process-flow/process-flow';
 import { ProcessStepContent } from '../../components/process-step-content/process-step-content';
+import { NotesPanel } from '../../components/notes-panel/notes-panel';
+import { HistoryPanel } from '../../components/history-panel/history-panel';
+import { ShareModal } from '../../components/share-modal/share-modal';
 import { MOCK_CASE_DOCUMENTS } from '../../mocks/mock-documents';
 import { CaseApplicant, CaseDocument } from '../../models/case-document.model';
 import {
@@ -18,7 +22,13 @@ import {
 
 @Component({
   selector: 'app-case-workspace',
-  imports: [DocumentPanel, DocumentPreviewPanel, ProcessFlow, ProcessStepContent, RouterLink],
+  standalone: true,
+  imports: [
+    CurrencyPipe, DatePipe, PercentPipe,
+    DocumentPanel, DocumentPreviewPanel, ProcessFlow, ProcessStepContent,
+    NotesPanel, HistoryPanel, ShareModal,
+    RouterLink
+  ],
   templateUrl: './case-workspace.html',
   styleUrl: './case-workspace.scss'
 })
@@ -27,7 +37,13 @@ export class CaseWorkspace {
   private readonly caseId = this.route.snapshot.paramMap.get('caseId');
 
   protected readonly activeStepId = signal<ProcessStepId>('summary');
+
+  // Tool Drawer Signals
   protected readonly documentPanelOpen = signal(false);
+  protected readonly notesPanelOpen    = signal(false);
+  protected readonly historyPanelOpen  = signal(false);
+  protected readonly shareModalOpen    = signal(false);
+
   protected readonly previewDocumentId = signal<string | undefined>(undefined);
 
   protected readonly caseItem =
@@ -82,8 +98,37 @@ export class CaseWorkspace {
     this.documents().findIndex((document) => document.documentId === this.previewDocumentId())
   );
 
+  // Tool Panel Toggles (mutually exclusive sidebar drawers)
   protected toggleDocumentPanel(): void {
-    this.documentPanelOpen.update((isOpen) => !isOpen);
+    const nextState = !this.documentPanelOpen();
+    this.closeAllPanels();
+    this.documentPanelOpen.set(nextState);
+  }
+
+  protected toggleNotesPanel(): void {
+    const nextState = !this.notesPanelOpen();
+    this.closeAllPanels();
+    this.notesPanelOpen.set(nextState);
+  }
+
+  protected toggleHistoryPanel(): void {
+    const nextState = !this.historyPanelOpen();
+    this.closeAllPanels();
+    this.historyPanelOpen.set(nextState);
+  }
+
+  protected openShareModal(): void {
+    this.shareModalOpen.set(true);
+  }
+
+  protected closeShareModal(): void {
+    this.shareModalOpen.set(false);
+  }
+
+  private closeAllPanels(): void {
+    this.documentPanelOpen.set(false);
+    this.notesPanelOpen.set(false);
+    this.historyPanelOpen.set(false);
   }
 
   protected selectStep(stepId: ProcessStepId): void {

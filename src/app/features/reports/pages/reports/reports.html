@@ -1,0 +1,173 @@
+<div class="reports-page anim-fade-up">
+
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Executive Analytics</p>
+      <h1>Reports &amp; Performance</h1>
+    </div>
+    <div class="header-actions">
+      <div class="time-toggle">
+        <button class="time-btn" [class.active]="timeRange() === '7d'" (click)="timeRange.set('7d')">7D</button>
+        <button class="time-btn" [class.active]="timeRange() === '30d'" (click)="timeRange.set('30d')">30D</button>
+        <button class="time-btn" [class.active]="timeRange() === '90d'" (click)="timeRange.set('90d')">90D</button>
+        <button class="time-btn" [class.active]="timeRange() === 'ytd'" (click)="timeRange.set('ytd')">YTD</button>
+      </div>
+      <button type="button" class="export-report-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export PDF
+      </button>
+    </div>
+  </header>
+
+  <!-- Executive KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi-card kpi-funded">
+      <span class="kpi-label">Funded Volume</span>
+      <strong class="kpi-value">{{ fundedVolumeTotal() | currency: 'USD':'symbol':'1.0-0' }}</strong>
+      <span class="kpi-sub positive">+14.2% vs previous period</span>
+    </div>
+    <div class="kpi-card kpi-cycle">
+      <span class="kpi-label">Avg Cycle Time</span>
+      <strong class="kpi-value">{{ avgCycleDays }} Days</strong>
+      <span class="kpi-sub positive">-2.1 days improvement</span>
+    </div>
+    <div class="kpi-card kpi-pass">
+      <span class="kpi-label">UW Pass Rate</span>
+      <strong class="kpi-value">{{ underwritingPassRate | percent: '1.1-1' }}</strong>
+      <span class="kpi-sub positive">+3.4% quality index</span>
+    </div>
+    <div class="kpi-card kpi-clear">
+      <span class="kpi-label">First-Touch Clear</span>
+      <strong class="kpi-value">{{ firstTimeClearRate | percent: '1.1-1' }}</strong>
+      <span class="kpi-sub neutral">Stable SLA compliance</span>
+    </div>
+  </div>
+
+  <!-- Charts & Analytics Section -->
+  <div class="analytics-grid">
+
+    <!-- Pipeline Stage Distribution Bar Chart -->
+    <div class="chart-card">
+      <div class="card-header">
+        <div>
+          <p class="card-eyebrow">Pipeline Volume</p>
+          <h3>Stage Distribution</h3>
+        </div>
+        <span class="chart-tag">Active Portfolio</span>
+      </div>
+
+      <div class="bar-chart">
+        <div class="bar-row">
+          <div class="bar-meta"><span>New</span><strong>$524.7K (1)</strong></div>
+          <div class="bar-track"><div class="bar-fill fill-new" style="width: 27%;"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-meta"><span>In Review</span><strong>$312.5K (1)</strong></div>
+          <div class="bar-track"><div class="bar-fill fill-review" style="width: 16%;"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-meta"><span>Conditional Approval</span><strong>$468.0K (1)</strong></div>
+          <div class="bar-track"><div class="bar-fill fill-cond" style="width: 24%;"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-meta"><span>Clear to Close</span><strong>$689.0K (1)</strong></div>
+          <div class="bar-track"><div class="bar-fill fill-ctc" style="width: 35%;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Mix -->
+    <div class="chart-card">
+      <div class="card-header">
+        <div>
+          <p class="card-eyebrow">Product Mix</p>
+          <h3>Loan Product Breakdown</h3>
+        </div>
+        <span class="chart-tag">Share %</span>
+      </div>
+
+      <div class="product-mix-list">
+        <div class="pm-item">
+          <div class="pm-head">
+            <span class="pm-dot dot-fixed"></span>
+            <strong>30Y Fixed Conventional</strong>
+            <span>42%</span>
+          </div>
+          <div class="pm-bar"><div class="pm-fill fill-fixed" style="width: 42%;"></div></div>
+        </div>
+
+        <div class="pm-item">
+          <div class="pm-head">
+            <span class="pm-dot dot-jumbo"></span>
+            <strong>7/6 ARM Jumbo</strong>
+            <span>34%</span>
+          </div>
+          <div class="pm-bar"><div class="pm-fill fill-jumbo" style="width: 34%;"></div></div>
+        </div>
+
+        <div class="pm-item">
+          <div class="pm-head">
+            <span class="pm-dot dot-fha"></span>
+            <strong>FHA 30Y Fixed</strong>
+            <span>15%</span>
+          </div>
+          <div class="pm-bar"><div class="pm-fill fill-fha" style="width: 15%;"></div></div>
+        </div>
+
+        <div class="pm-item">
+          <div class="pm-head">
+            <span class="pm-dot dot-15y"></span>
+            <strong>15Y Fixed Conventional</strong>
+            <span>9%</span>
+          </div>
+          <div class="pm-bar"><div class="pm-fill fill-15y" style="width: 9%;"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Processor Productivity Leaderboard -->
+  <div class="leaderboard-card">
+    <div class="card-header">
+      <div>
+        <p class="card-eyebrow">Operations Leaderboard</p>
+        <h3>Processor Performance</h3>
+      </div>
+      <span class="chart-tag">30-Day Period</span>
+    </div>
+
+    <table class="leaderboard-table">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Processor</th>
+          <th>Cases Handled</th>
+          <th>Conditions Cleared</th>
+          <th>Avg SLA Speed</th>
+          <th>Funded Volume</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of leaderboard; track row.name; let i = $index) {
+          <tr>
+            <td>
+              <span class="rank-badge" [class.rank-1]="i === 0" [class.rank-2]="i === 1" [class.rank-3]="i === 2">#{{ i + 1 }}</span>
+            </td>
+            <td>
+              <div class="processor-cell">
+                <span class="avatar-sm">{{ row.name[0] }}</span>
+                <strong>{{ row.name }}</strong>
+              </div>
+            </td>
+            <td><strong>{{ row.casesHandled }}</strong></td>
+            <td><strong>{{ row.conditionsCleared }}</strong></td>
+            <td><span class="speed-chip">{{ row.avgSlaHours }}h avg</span></td>
+            <td><strong class="vol-cell">{{ row.fundedVolume | currency: 'USD':'symbol':'1.0-0' }}</strong></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+</div>

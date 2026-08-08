@@ -1,0 +1,71 @@
+<div class="select-wrapper" [class.is-open]="isOpen()" [class.is-disabled]="disabled">
+
+  @if (label) {
+    <label class="select-label">{{ label }}</label>
+  }
+
+  <!-- Trigger Box -->
+  <button
+    type="button"
+    class="select-trigger"
+    [disabled]="disabled"
+    (click)="toggle()"
+    aria-haspopup="listbox"
+    [attr.aria-expanded]="isOpen()"
+  >
+    <span class="trigger-text" [class.placeholder]="!selectedOption()">
+      {{ selectedOption() ? selectedOption()!.label : placeholder }}
+    </span>
+
+    @if (selectedOption()?.badge) {
+      <span class="trigger-badge">{{ selectedOption()!.badge }}</span>
+    }
+
+    <svg class="chevron-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
+  </button>
+
+  <!-- Popover Menu -->
+  @if (isOpen()) {
+    <div class="popover-menu anim-fade-scale" role="listbox">
+
+      @if (parsedOptions().length > 5) {
+        <div class="search-box">
+          <svg class="search-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input
+            type="text"
+            placeholder="Search…"
+            [ngModel]="searchFilter()"
+            (ngModelChange)="searchFilter.set($event)"
+            (click)="$event.stopPropagation()"
+          />
+        </div>
+      }
+
+      <div class="options-list">
+        @for (opt of filteredOptions(); track opt.value) {
+          <div
+            class="option-item"
+            [class.selected]="opt.value === value"
+            (click)="select(opt.value)"
+            role="option"
+            [attr.aria-selected]="opt.value === value"
+          >
+            <span class="opt-label">{{ opt.label }}</span>
+
+            @if (opt.badge) {
+              <span class="opt-badge">{{ opt.badge }}</span>
+            }
+
+            @if (opt.value === value) {
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            }
+          </div>
+        } @empty {
+          <div class="empty-option">No options found</div>
+        }
+      </div>
+
+    </div>
+  }
+
+</div>

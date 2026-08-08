@@ -1,0 +1,211 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(4px);
+  display: grid;
+  place-items: center;
+  z-index: 999;
+  padding: 20px;
+}
+
+.modal-card {
+  width: min(520px, 100%);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel-subtle);
+
+  h2 { font-size: 1.2rem; font-weight: 800; margin: 0; }
+}
+
+.eyebrow {
+  margin: 0 0 3px;
+  font-size: 0.70rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent-strong);
+}
+
+.sub-text {
+  font-size: 0.80rem;
+  color: var(--muted);
+  margin: 4px 0 0;
+}
+
+.close-btn {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--muted);
+  cursor: pointer;
+
+  &:hover { border-color: var(--danger); color: var(--danger); }
+}
+
+/* ── Share Link Box ──────────────────────────────────────── */
+.share-link-box {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.box-label {
+  display: block;
+  font-size: 0.70rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.link-row {
+  display: flex;
+  gap: 8px;
+
+  input {
+    flex: 1;
+    padding: 9px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    font-family: var(--font-mono);
+    font-size: 0.80rem;
+    color: var(--text-secondary);
+    background: var(--panel-subtle);
+    outline: none;
+  }
+}
+
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: var(--radius);
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+
+  &:hover { background: var(--accent-hover); }
+
+  &.copied {
+    background: var(--success);
+  }
+}
+
+/* ── Collaborators Box ───────────────────────────────────── */
+.collaborators-box {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.user-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.user-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: var(--radius);
+  background: var(--panel-subtle);
+
+  &:hover { background: #f1f5f9; }
+}
+
+.user-avatar {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.78rem;
+  flex-shrink: 0;
+}
+
+.user-details {
+  flex: 1;
+  min-width: 0;
+
+  strong { display: block; font-size: 0.84rem; color: var(--text); }
+  span   { display: block; font-size: 0.74rem; color: var(--muted); margin-top: 1px; }
+}
+
+.access-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+
+  &.access-full-access           { background: var(--accent-light); color: var(--accent-strong); }
+  &.access-can-edit-conditions   { background: var(--warning-bg);  color: var(--warning); }
+  &.access-view-only             { background: var(--line);        color: var(--muted); }
+}
+
+/* ── Footer ──────────────────────────────────────────────── */
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: var(--panel-subtle);
+}
+
+.export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text-secondary);
+  font-size: 0.80rem;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover { border-color: var(--accent); color: var(--accent); }
+}
+
+.done-btn {
+  padding: 8px 20px;
+  border-radius: var(--radius);
+  border: none;
+  background: var(--text);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover { opacity: 0.9; }
+}

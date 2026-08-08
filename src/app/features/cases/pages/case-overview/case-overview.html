@@ -1,33 +1,40 @@
-<main class="workspace">
-  <app-case-sidebar />
-
-  <section class="content">
-    <header class="page-header">
-      <div>
-        <p class="eyebrow">Active workload</p>
-        <h1>Case Overview</h1>
-      </div>
-      <label class="search">
-        <span>Search cases</span>
-        <input
-          type="search"
-          [ngModel]="searchTerm()"
-          (ngModelChange)="searchTerm.set($event)"
-          placeholder="Case, borrower, property, owner"
-        />
-      </label>
-    </header>
-
-    <app-case-summary-metrics [summary]="summary()" />
-
-    <div class="case-grid">
-      <app-case-list
-        [cases]="filteredCases()"
-        [selectedCaseId]="selectedCase().id"
-        (caseSelected)="selectCase($event)"
-      />
-
-      <app-case-detail [caseItem]="selectedCase()" />
+<div class="overview-page anim-fade-up">
+  <header class="page-header">
+    <div class="header-title">
+      <p class="eyebrow">Active Workload</p>
+      <h1>Case Overview</h1>
     </div>
-  </section>
-</main>
+    <div class="header-right">
+      <button type="button" class="btn-create-case" (click)="openCreateModal()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Mortgage Case
+      </button>
+      <div class="header-meta">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span class="live-label">Live · Updated just now</span>
+      </div>
+    </div>
+  </header>
+
+  <app-case-summary-metrics [summary]="summary()" />
+
+  <div class="toolbar-wrap anim-fade-up stagger-2">
+    <app-case-filter-toolbar />
+  </div>
+
+  <div class="case-grid anim-fade-up stagger-3">
+    <app-case-list
+      [cases]="filteredCases()"
+      [selectedCaseId]="selectedCase().id"
+      (caseSelected)="selectCase($event)"
+    />
+    <app-case-detail [caseItem]="selectedCase()" />
+  </div>
+</div>
+
+@if (createModalOpen()) {
+  <app-create-case-modal
+    (closed)="closeCreateModal()"
+    (caseCreated)="selectCase($event.id)"
+  />
+}

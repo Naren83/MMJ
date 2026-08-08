@@ -1,0 +1,114 @@
+<div class="conditions-page anim-fade-up">
+
+  <!-- Header -->
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Loan Conditions</p>
+      <h1>Conditions</h1>
+    </div>
+  </header>
+
+  <!-- Summary KPIs -->
+  <div class="cond-summary">
+    <div class="cs-card cs-total">
+      <span class="cs-label">Total</span>
+      <strong class="cs-value">{{ summary().total }}</strong>
+    </div>
+    <div class="cs-card cs-open">
+      <span class="cs-label">Open</span>
+      <strong class="cs-value">{{ summary().open }}</strong>
+    </div>
+    <div class="cs-card cs-received">
+      <span class="cs-label">Received</span>
+      <strong class="cs-value">{{ summary().received }}</strong>
+    </div>
+    <div class="cs-card cs-cleared">
+      <span class="cs-label">Cleared</span>
+      <strong class="cs-value">{{ summary().cleared }}</strong>
+    </div>
+    <div class="cs-card cs-urgent">
+      <span class="cs-label">High Priority Open</span>
+      <strong class="cs-value">{{ summary().highPriority }}</strong>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="cond-filters">
+    <div class="search-wrap">
+      <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input class="search-input" type="search" placeholder="Search conditions…" [ngModel]="search()" (ngModelChange)="search.set($event)" />
+    </div>
+
+    <div class="pill-row">
+      @for (s of statuses; track s) {
+        <button class="pill" [class.active]="status() === s" (click)="status.set(s)">{{ s }}</button>
+      }
+    </div>
+
+    <div class="custom-select-wrap">
+      <app-custom-select
+        [options]="categories"
+        [value]="category()"
+        (valueChange)="setCategory($event)"
+      />
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="cond-table-wrap">
+    <table class="cond-table">
+      <thead>
+        <tr>
+          <th>Condition</th>
+          <th>Case / Borrower</th>
+          <th>Category</th>
+          <th>Priority</th>
+          <th>Assigned</th>
+          <th>Due Date</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (cond of filtered(); track trackCond(0, cond)) {
+          <tr class="cond-row">
+            <td>
+              <span class="cond-id">{{ cond.id }}</span>
+              <span class="cond-desc">{{ cond.description }}</span>
+            </td>
+            <td>
+              <a class="case-link" [routerLink]="['/cases', cond.caseId]">{{ cond.caseId }}</a>
+              <span class="sub">{{ cond.borrower }}</span>
+            </td>
+            <td><span class="cat-chip cat-{{ cond.category.toLowerCase() }}">{{ cond.category }}</span></td>
+            <td>
+              <span class="priority-chip priority-{{ cond.priority.toLowerCase() }}">{{ cond.priority }}</span>
+            </td>
+            <td><span class="assignee">{{ cond.assignedTo }}</span></td>
+            <td><span class="due-date">{{ cond.dueDate | date: 'MMM d' }}</span></td>
+            <td>
+              <span class="status-chip status-{{ cond.status.toLowerCase().replaceAll(' ', '-') }}">
+                {{ cond.status }}
+              </span>
+            </td>
+            <td>
+              @if (cond.status === 'Open') {
+                <button class="action-btn btn-receive" (click)="updateStatus(cond, 'Received')">Mark Received</button>
+              } @else if (cond.status === 'Received') {
+                <button class="action-btn btn-clear" (click)="updateStatus(cond, 'Cleared')">Clear</button>
+              } @else {
+                <span class="done-label">✓ Done</span>
+              }
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="8" class="empty-state">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <p>No conditions match your filters.</p>
+          </td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+</div>
